@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Tracker 3D</title>
 
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR-ID" crossorigin="anonymous"></script>
+
 <style>
 
 /* 🌌 Background */
@@ -39,7 +41,7 @@ body {
   margin: 0 auto 30px auto; 
 }
 
-/* 🔥 3D white inputs */
+/* 🔥 Uniform 3D white inputs & Select */
 .entry-form input, .entry-form select { 
   width: 100%; 
   padding: 15px; 
@@ -50,9 +52,11 @@ body {
   color:#000; 
   font-size: 16px; 
   box-shadow: inset 4px 4px 6px #a3b1c6, inset -4px -4px 6px #ffffff;
+  display: block; /* Block se width 100% sahi kaam karti hai */
+  box-sizing: border-box; /* Isse padding width se bahar nahi jati */
 }
 
-/* 🔘 3D buttons */
+/* 🔘 Uniform 3D buttons */
 .btn { 
   width: 100%; 
   padding: 15px; 
@@ -64,6 +68,8 @@ body {
   color:#000; 
   cursor: pointer;
   box-shadow: 6px 6px 10px #a3b1c6, -6px -6px 10px #ffffff;
+  display: block;
+  box-sizing: border-box;
 }
 
 /* 📊 3D table */
@@ -86,6 +92,14 @@ th, td {
   color:#000;
 }
 
+/* ✅ Type and Amount Column Width Fix */
+td:nth-child(3), th:nth-child(3),
+td:nth-child(4), th:nth-child(4) {
+    min-width: 110px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
 .total { 
   font-weight: bold; 
   background: #dfe6ee;
@@ -96,19 +110,34 @@ h1, h2 {
   color: #fff;
 }
 
+/* 📱 Ad Container Style */
+.ad-container {
+  text-align: center;
+  margin: 15px auto;
+  max-width: 700px;
+}
+
 </style>
 
 </head>
 <body>
 
-<!-- 🌐 OFFLINE MESSAGE -->
 <div id="offlineMsg" style="display:none; text-align:center; margin-top:50px;">
   <h2>📶 Internet Required</h2>
   <p>Please turn ON internet to use this app</p>
 </div>
 
-<!-- 🔥 MAIN APP -->
 <div id="mainApp">
+
+<div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-YOUR-ID"
+         data-ad-slot="YOUR-AD-UNIT-ID"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
 <h1>Daily Tracker 3D</h1>
 
@@ -148,35 +177,45 @@ h1, h2 {
 <tr class="total">
 <td colspan="3">Total Income Today:</td>
 <td id="totalIncome">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 <tr class="total">
 <td colspan="3">Total Expense Today:</td>
 <td id="totalExpense">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 <tr class="total">
 <td colspan="3">Balance Today:</td>
 <td id="balance">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 <tr class="total">
 <td colspan="3">Total Income This Month:</td>
 <td id="monthIncome">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 <tr class="total">
 <td colspan="3">Total Expense This Month:</td>
 <td id="monthExpense">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 <tr class="total">
 <td colspan="3">Balance This Month:</td>
 <td id="monthBalance">0</td>
-<td></td>
+<td colspan="2"></td>
 </tr>
 </tfoot>
 </table>
+
+<div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-YOUR-ID"
+         data-ad-slot="YOUR-AD-UNIT-ID"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
 </div>
 
