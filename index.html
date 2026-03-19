@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Tracker 3D</title>
+<title>Daily Tracker 3D Pro</title>
 
 <style>
-
-/* 🌌 Background */
+/* 🌌 Background & UI Styles */
 body { 
   font-family: 'Segoe UI', sans-serif; 
   background: #000;
@@ -16,7 +15,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ❄ Snow */
 .snowflake {
   position: fixed;
   top: -10px;
@@ -29,7 +27,6 @@ body {
   to { transform: translateY(100vh); }
 }
 
-/* 🧊 Glass form */
 .entry-form { 
   background: rgba(255,255,255,0.08); 
   backdrop-filter: blur(10px);
@@ -39,7 +36,6 @@ body {
   margin: 0 auto 30px auto; 
 }
 
-/* 🔥 3D white inputs */
 .entry-form input, .entry-form select { 
   width: 100%; 
   padding: 15px; 
@@ -52,7 +48,6 @@ body {
   box-shadow: inset 4px 4px 6px #a3b1c6, inset -4px -4px 6px #ffffff;
 }
 
-/* 🔘 3D buttons */
 .btn { 
   width: 100%; 
   padding: 15px; 
@@ -66,7 +61,6 @@ body {
   box-shadow: 6px 6px 10px #a3b1c6, -6px -6px 10px #ffffff;
 }
 
-/* 📊 3D table */
 table { 
   width: 100%; 
   border-collapse: collapse; 
@@ -91,114 +85,59 @@ th, td {
   background: #dfe6ee;
 }
 
-h1, h2 {
-  text-align: center;
-  color: #fff;
-}
-
+h1, h2 { text-align: center; color: #fff; }
 </style>
-
 </head>
 <body>
 
-<!-- 🌐 OFFLINE MESSAGE -->
-<div id="offlineMsg" style="display:none; text-align:center; margin-top:50px;">
-  <h2>📶 Internet Required</h2>
-  <p>Please turn ON internet to use this app</p>
-</div>
-
-<!-- 🔥 MAIN APP -->
 <div id="mainApp">
+  <h1>Daily Tracker 3D</h1>
 
-<h1>Daily Tracker 3D</h1>
+  <div class="entry-form">
+    <input type="date" id="entryDate" />
+    <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" />
+    <input type="number" id="amount" placeholder="Amount" />
+    
+    <select id="type">
+      <option value="Income">Income</option>
+      <option value="Expense">Expense</option>
+    </select>
 
-<div class="entry-form">
-  <input type="date" id="entryDate" />
-  <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" />
-  <input type="number" id="amount" placeholder="Amount" />
-  
-  <select id="type">
-    <option value="Income">Income</option>
-    <option value="Expense">Expense</option>
-  </select>
+    <input type="text" id="note" placeholder="Note (optional)" />
+    
+    <button class="btn" onclick="addEntry()">Add Entry</button>
+    <button class="btn" onclick="exportExcel()">📁 Export File</button>
+  </div>
 
-  <input type="text" id="note" placeholder="Note (optional)" />
-  
-  <button class="btn" onclick="addEntry()">Add Entry</button>
-  <button class="btn" onclick="exportExcel()">📁 Export File</button>
-</div>
-
-<h2>Month Entries</h2>
-
-<table id="entriesTable">
-<thead>
-<tr>
-<th>Date</th>
-<th>Category</th>
-<th>Type</th>
-<th>Amount</th>
-<th>Note</th>
-<th>Delete</th>
-</tr>
-</thead>
-
-<tbody></tbody>
-
-<tfoot>
-<tr class="total">
-<td colspan="3">Total Income Today:</td>
-<td id="totalIncome">0</td>
-<td></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Expense Today:</td>
-<td id="totalExpense">0</td>
-<td></td>
-</tr>
-<tr class="total">
-<td colspan="3">Balance Today:</td>
-<td id="balance">0</td>
-<td></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Income This Month:</td>
-<td id="monthIncome">0</td>
-<td></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Expense This Month:</td>
-<td id="monthExpense">0</td>
-<td></td>
-</tr>
-<tr class="total">
-<td colspan="3">Balance This Month:</td>
-<td id="monthBalance">0</td>
-<td></td>
-</tr>
-</tfoot>
-</table>
-
+  <h2>Month Entries</h2>
+  <table id="entriesTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Cat.</th>
+        <th>Type</th>
+        <th>Amt</th>
+        <th>Del</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr class="total"><td colspan="3">Today Balance:</td><td id="balance" colspan="2">0</td></tr>
+      <tr class="total"><td colspan="3">Month Balance:</td><td id="monthBalance" colspan="2">0</td></tr>
+    </tfoot>
+  </table>
 </div>
 
 <script>
-
-/* 🌐 INTERNET CHECK */
-function checkInternet(){
-  if(!navigator.onLine){
-    document.getElementById("mainApp").style.display="none";
-    document.getElementById("offlineMsg").style.display="block";
-  }
-}
-checkInternet();
-
-window.addEventListener("offline", checkInternet);
-window.addEventListener("online", ()=>location.reload());
-
-/* 📊 ORIGINAL CODE SAME */
 let entries = JSON.parse(localStorage.getItem("dailyEntries")) || [];
+document.getElementById("entryDate").valueAsDate = new Date();
 
 function saveEntries() {
   localStorage.setItem("dailyEntries", JSON.stringify(entries));
+  // MIT App Inventor ko signal bhejna
+  if (window.AppInventor) {
+    window.AppInventor.setWebViewString("Saved:" + entries.length);
+  }
 }
 
 function addEntry() {
@@ -208,8 +147,8 @@ function addEntry() {
   let type = document.getElementById("type").value;
   let note = document.getElementById("note").value;
 
-  if (!date || !category || !amount) {
-    alert("Please fill all required fields!");
+  if (!date || !category || isNaN(amount)) {
+    alert("Please fill required fields!");
     return;
   }
 
@@ -230,82 +169,60 @@ function deleteEntry(index){
 
 function exportExcel(){
   let csv = "Date,Category,Type,Amount,Note\n";
-
   entries.forEach(e=>{
     csv += `${e.date},${e.category},${e.type},${e.amount},${e.note}\n`;
   });
 
-  let blob = new Blob([csv],{type:"text/csv"});
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "DailyTracker.csv";
-  a.click();
+  // MIT App Inventor Bridge
+  if (window.AppInventor) {
+      window.AppInventor.setWebViewString("export:" + csv);
+  } else {
+      // Normal Browser download
+      let blob = new Blob([csv],{type:"text/csv"});
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "DailyTracker.csv";
+      a.click();
+  }
 }
 
 function renderTable() {
   let tbody = document.querySelector("#entriesTable tbody");
   tbody.innerHTML = "";
-
-  let incomeToday = 0, expenseToday = 0;
-  let monthIncome = 0, monthExpense = 0;
-
+  let incomeToday = 0, expenseToday = 0, monthIncome = 0, monthExpense = 0;
   let today = new Date().toISOString().split('T')[0];
   let currentMonth = today.slice(0,7);
 
   entries.forEach((e,index) => {
-
     if (e.date.slice(0,7) === currentMonth) {
-
       let tr = document.createElement("tr");
-
-      if (e.date === today)
-      tr.style.backgroundColor = "#d0f0c0";
-
-      tr.innerHTML = `
-      <td>${e.date}</td>
-      <td>${e.category}</td>
-      <td>${e.type}</td>
-      <td>${e.amount}</td>
-      <td>${e.note}</td>
-      <td><button onclick="deleteEntry(${index})">❌</button></td>
-      `;
-
+      if (e.date === today) tr.style.backgroundColor = "#d0f0c0";
+      tr.innerHTML = `<td>${e.date.slice(5)}</td><td>${e.category}</td><td>${e.type[0]}</td><td>${e.amount}</td><td><button onclick="deleteEntry(${index})">x</button></td>`;
       tbody.appendChild(tr);
 
-      if (e.type === "Income") monthIncome += e.amount;
-      else monthExpense += e.amount;
-
+      if (e.type === "Income") monthIncome += e.amount; else monthExpense += e.amount;
       if (e.date === today) {
-        if (e.type === "Income") incomeToday += e.amount;
-        else expenseToday += e.amount;
+        if (e.type === "Income") incomeToday += e.amount; else expenseToday += e.amount;
       }
     }
-
   });
 
-  document.getElementById("totalIncome").innerText = incomeToday;
-  document.getElementById("totalExpense").innerText = expenseToday;
-  document.getElementById("balance").innerText = incomeToday - expenseToday;
-
-  document.getElementById("monthIncome").innerText = monthIncome;
-  document.getElementById("monthExpense").innerText = monthExpense;
-  document.getElementById("monthBalance").innerText = monthIncome - monthExpense;
+  document.getElementById("balance").innerText = (incomeToday - expenseToday).toFixed(2);
+  document.getElementById("monthBalance").innerText = (monthIncome - monthExpense).toFixed(2);
 }
 
 renderTable();
 
-/* ❄ Snow */
-function snow(){
+// Snow Effect
+setInterval(()=>{
   const s = document.createElement("div");
   s.className = "snowflake";
   s.innerHTML = "❄";
   s.style.left = Math.random()*window.innerWidth+"px";
   s.style.animationDuration = (Math.random()*3+2)+"s";
   document.body.appendChild(s);
-  setTimeout(()=>s.remove(),5000);
-}
-setInterval(snow,200);
-
+  setTimeout(()=>s.remove(),4000);
+},300);
 </script>
 
 </body>
