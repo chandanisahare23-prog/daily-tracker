@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Tracker 3D</title>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR-ID" crossorigin="anonymous"></script>
-
 <style>
-
 /* 🌌 Background */
 body { 
   font-family: 'Segoe UI', sans-serif; 
@@ -18,13 +15,13 @@ body {
   overflow-x: hidden;
 }
 
-/* ❄ Snow */
+/* ❄ Snow - Fixed Z-index so it stays behind ads */
 .snowflake {
   position: fixed;
   top: -10px;
   color: #fff;
   font-size: 10px;
-  z-index: 9999;
+  z-index: -1; 
   animation: fall linear infinite;
 }
 @keyframes fall {
@@ -52,8 +49,8 @@ body {
   color:#000; 
   font-size: 16px; 
   box-shadow: inset 4px 4px 6px #a3b1c6, inset -4px -4px 6px #ffffff;
-  display: block; /* Block se width 100% sahi kaam karti hai */
-  box-sizing: border-box; /* Isse padding width se bahar nahi jati */
+  display: block;
+  box-sizing: border-box;
 }
 
 /* 🔘 Uniform 3D buttons */
@@ -110,15 +107,14 @@ h1, h2 {
   color: #fff;
 }
 
-/* 📱 Ad Container Style */
+/* 📱 Ad Container Style - Simplified */
 .ad-container {
   text-align: center;
   margin: 15px auto;
-  max-width: 700px;
+  min-height: 50px; /* Space for AppCreator24 ads */
 }
 
 </style>
-
 </head>
 <body>
 
@@ -129,15 +125,7 @@ h1, h2 {
 
 <div id="mainApp">
 
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-app-pub"
-         data-ad-slot="ca-app-pub"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
+<div class="ad-container"></div>
 
 <h1>Daily Tracker 3D</h1>
 
@@ -170,57 +158,22 @@ h1, h2 {
 <th>Delete</th>
 </tr>
 </thead>
-
 <tbody></tbody>
-
 <tfoot>
-<tr class="total">
-<td colspan="3">Total Income Today:</td>
-<td id="totalIncome">0</td>
-<td colspan="2"></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Expense Today:</td>
-<td id="totalExpense">0</td>
-<td colspan="2"></td>
-</tr>
-<tr class="total">
-<td colspan="3">Balance Today:</td>
-<td id="balance">0</td>
-<td colspan="2"></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Income This Month:</td>
-<td id="monthIncome">0</td>
-<td colspan="2"></td>
-</tr>
-<tr class="total">
-<td colspan="3">Total Expense This Month:</td>
-<td id="monthExpense">0</td>
-<td colspan="2"></td>
-</tr>
-<tr class="total">
-<td colspan="3">Balance This Month:</td>
-<td id="monthBalance">0</td>
-<td colspan="2"></td>
-</tr>
+<tr class="total"><td colspan="3">Total Income Today:</td><td id="totalIncome">0</td><td colspan="2"></td></tr>
+<tr class="total"><td colspan="3">Total Expense Today:</td><td id="totalExpense">0</td><td colspan="2"></td></tr>
+<tr class="total"><td colspan="3">Balance Today:</td><td id="balance">0</td><td colspan="2"></td></tr>
+<tr class="total"><td colspan="3">Total Income This Month:</td><td id="monthIncome">0</td><td colspan="2"></td></tr>
+<tr class="total"><td colspan="3">Total Expense This Month:</td><td id="monthExpense">0</td><td colspan="2"></td></tr>
+<tr class="total"><td colspan="3">Balance This Month:</td><td id="monthBalance">0</td><td colspan="2"></td></tr>
 </tfoot>
 </table>
 
-<div class="ad-container">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-app-pub-8654141857214036~7351702634"
-         data-ad-slot="ca-app-pub-8654141857214036/4429325125"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
+<div class="ad-container"></div>
 
 </div>
 
 <script>
-
 /* 🌐 INTERNET CHECK */
 function checkInternet(){
   if(!navigator.onLine){
@@ -229,16 +182,12 @@ function checkInternet(){
   }
 }
 checkInternet();
-
 window.addEventListener("offline", checkInternet);
 window.addEventListener("online", ()=>location.reload());
 
-/* 📊 ORIGINAL CODE SAME */
+/* 📊 LOGIC */
 let entries = JSON.parse(localStorage.getItem("dailyEntries")) || [];
-
-function saveEntries() {
-  localStorage.setItem("dailyEntries", JSON.stringify(entries));
-}
+function saveEntries() { localStorage.setItem("dailyEntries", JSON.stringify(entries)); }
 
 function addEntry() {
   let date = document.getElementById("entryDate").value;
@@ -246,34 +195,20 @@ function addEntry() {
   let amount = parseFloat(document.getElementById("amount").value);
   let type = document.getElementById("type").value;
   let note = document.getElementById("note").value;
-
-  if (!date || !category || !amount) {
-    alert("Please fill all required fields!");
-    return;
-  }
-
+  if (!date || !category || !amount) { alert("Please fill all fields!"); return; }
   entries.push({ date, category, amount, type, note });
   saveEntries();
   renderTable();
-
   document.getElementById("category").value = "";
   document.getElementById("amount").value = "";
   document.getElementById("note").value = "";
 }
 
-function deleteEntry(index){
-  entries.splice(index,1);
-  saveEntries();
-  renderTable();
-}
+function deleteEntry(index){ entries.splice(index,1); saveEntries(); renderTable(); }
 
 function exportExcel(){
   let csv = "Date,Category,Type,Amount,Note\n";
-
-  entries.forEach(e=>{
-    csv += `${e.date},${e.category},${e.type},${e.amount},${e.note}\n`;
-  });
-
+  entries.forEach(e=>{ csv += `${e.date},${e.category},${e.type},${e.amount},${e.note}\n`; });
   let blob = new Blob([csv],{type:"text/csv"});
   let a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -284,68 +219,39 @@ function exportExcel(){
 function renderTable() {
   let tbody = document.querySelector("#entriesTable tbody");
   tbody.innerHTML = "";
-
-  let incomeToday = 0, expenseToday = 0;
-  let monthIncome = 0, monthExpense = 0;
-
+  let incomeToday = 0, expenseToday = 0, monthIncome = 0, monthExpense = 0;
   let today = new Date().toISOString().split('T')[0];
   let currentMonth = today.slice(0,7);
 
   entries.forEach((e,index) => {
-
     if (e.date.slice(0,7) === currentMonth) {
-
       let tr = document.createElement("tr");
-
-      if (e.date === today)
-      tr.style.backgroundColor = "#d0f0c0";
-
-      tr.innerHTML = `
-      <td>${e.date}</td>
-      <td>${e.category}</td>
-      <td>${e.type}</td>
-      <td>${e.amount}</td>
-      <td>${e.note}</td>
-      <td><button onclick="deleteEntry(${index})">❌</button></td>
-      `;
-
+      if (e.date === today) tr.style.backgroundColor = "#d0f0c0";
+      tr.innerHTML = `<td>${e.date}</td><td>${e.category}</td><td>${e.type}</td><td>${e.amount}</td><td>${e.note}</td><td><button onclick="deleteEntry(${index})">❌</button></td>`;
       tbody.appendChild(tr);
-
-      if (e.type === "Income") monthIncome += e.amount;
-      else monthExpense += e.amount;
-
-      if (e.date === today) {
-        if (e.type === "Income") incomeToday += e.amount;
-        else expenseToday += e.amount;
-      }
+      if (e.type === "Income") monthIncome += e.amount; else monthExpense += e.amount;
+      if (e.date === today) { if (e.type === "Income") incomeToday += e.amount; else expenseToday += e.amount; }
     }
-
   });
-
   document.getElementById("totalIncome").innerText = incomeToday;
   document.getElementById("totalExpense").innerText = expenseToday;
   document.getElementById("balance").innerText = incomeToday - expenseToday;
-
   document.getElementById("monthIncome").innerText = monthIncome;
   document.getElementById("monthExpense").innerText = monthExpense;
   document.getElementById("monthBalance").innerText = monthIncome - monthExpense;
 }
-
 renderTable();
 
 /* ❄ Snow */
 function snow(){
   const s = document.createElement("div");
-  s.className = "snowflake";
-  s.innerHTML = "❄";
+  s.className = "snowflake"; s.innerHTML = "❄";
   s.style.left = Math.random()*window.innerWidth+"px";
   s.style.animationDuration = (Math.random()*3+2)+"s";
   document.body.appendChild(s);
   setTimeout(()=>s.remove(),5000);
 }
 setInterval(snow,200);
-
 </script>
-
 </body>
 </html>
