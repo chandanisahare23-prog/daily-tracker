@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Tracker 3D </title>
+    <title>Daily Tracker 3D - Starry Night</title>
     <!-- Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -107,7 +107,7 @@
         
         <!-- Ad Space -->
         <div class="h-16 bg-white/5 rounded-xl mb-8 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
-          
+            Advertisement
         </div>
 
         <header class="text-center mb-10">
@@ -184,7 +184,7 @@
 
         <!-- Footer Ad -->
         <div class="h-16 bg-white/5 rounded-xl mt-12 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
-           
+            Advertisement
         </div>
     </div>
 
@@ -279,8 +279,8 @@
             document.getElementById("entryCount").innerText = `${entries.length} Total`;
         }
 
-        /* --- FIXED MOBILE EXPORT --- */
-        function exportCSV() {
+        /* --- ROBUST MOBILE EXPORT --- */
+        async function exportCSV() {
             if (entries.length === 0) { alert("Pehle kuch data toh daalo!"); return; }
             
             let csv = "Date,Category,Type,Amount,Note\n";
@@ -292,32 +292,49 @@
 
             const filename = `DailyTracker_3D_${new Date().toISOString().split('T')[0]}.csv`;
 
-            // Mobile compatibility check
+            // 1. Try Web Share API (Best for Mobile Apps/WebViews)
+            if (navigator.canShare && navigator.share) {
+                try {
+                    const file = new File([csv], filename, { type: 'text/csv' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Daily Tracker Data',
+                            text: 'Exported CSV File',
+                        });
+                        return; // Success!
+                    }
+                } catch (err) {
+                    console.log("Share failed, falling back to download:", err);
+                }
+            }
+
+            // 2. Fallback: Blob Download (Standard)
             try {
-                // Method 1: Data URI (Best for Mobile Apps/WebViews)
-                const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", filename);
-                link.setAttribute("target", "_blank"); // Mobile browsers ke liye zaroori
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                setTimeout(() => {
-                    alert("✅ Export Successful! Check your Downloads folder.");
-                }, 500);
-            } catch (err) {
-                // Method 2: Blob Fallback
                 const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
-                link.download = filename;
+                link.setAttribute("download", filename);
+                link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    alert("✅ Export Successful! Check your Downloads folder.");
+                }, 1000);
+            } catch (err) {
+                console.error("Export failed:", err);
+                // 3. Last Resort: Data URI
+                try {
+                    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                    window.open(encodedUri);
+                    alert("✅ Export Attempted via Data URI.");
+                } catch (uriErr) {
+                    alert("❌ Export failed. Please check browser permissions.");
+                }
             }
         }
 
