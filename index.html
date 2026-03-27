@@ -1,271 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Tracker 3D</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Tracker 3D - Starry Night</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-<style>
-/* 🌌 Background */
-body { 
-  font-family: 'Segoe UI', sans-serif; 
-  background: #000;
-  padding: 20px; 
-  color: #fff;
-  overflow-x: hidden;
-}
+        /* Neumorphic 3D Shadows */
+        .neo-shadow {
+            box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5), -4px -4px 10px rgba(255, 255, 255, 0.05);
+        }
 
-/* ❄ Snow - Fixed Z-index so it stays behind ads */
-.snowflake {
-  position: fixed;
-  top: -10px;
-  color: #fff;
-  font-size: 10px;
-  z-index: -1; 
-  animation: fall linear infinite;
-}
-@keyframes fall {
-  to { transform: translateY(100vh); }
-}
+        .neo-shadow-inset {
+            box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), inset -2px -2px 6px rgba(255, 255, 255, 0.05);
+        }
 
-/* 🧊 Glass form */
-.entry-form { 
-  background: rgba(255,255,255,0.08); 
-  backdrop-filter: blur(10px);
-  border-radius: 20px; 
-  padding: 25px; 
-  max-width: 500px; 
-  margin: 0 auto 30px auto; 
-}
+        /* Starry Night Animation */
+        .star {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
 
-/* 🔥 Uniform 3D white inputs & Select */
-.entry-form input, .entry-form select { 
-  width: 100%; 
-  padding: 15px; 
-  margin: 10px 0; 
-  border-radius: 12px; 
-  border: none; 
-  background: #e0e5ec; 
-  color:#000; 
-  font-size: 16px; 
-  box-shadow: inset 4px 4px 6px #a3b1c6, inset -4px -4px 6px #ffffff;
-  display: block;
-  box-sizing: border-box;
-}
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
 
-/* 🔘 Uniform 3D buttons */
-.btn { 
-  width: 100%; 
-  padding: 15px; 
-  margin-top: 10px; 
-  font-size: 18px; 
-  border-radius: 15px; 
-  border: none; 
-  background: #e0e5ec; 
-  color:#000; 
-  cursor: pointer;
-  box-shadow: 6px 6px 10px #a3b1c6, -6px -6px 10px #ffffff;
-  display: block;
-  box-sizing: border-box;
-}
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-/* 📊 3D table */
-table { 
-  width: 100%; 
-  border-collapse: collapse; 
-  max-width: 700px; 
-  margin: 0 auto 30px auto; 
-  background: #e0e5ec;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 8px 8px 15px #000, -2px -2px 10px #333;
-}
+        /* 3D Inputs */
+        input, select {
+            background: #e0e5ec !important;
+            color: #000 !important;
+            border: none !important;
+            outline: none !important;
+        }
 
-th, td { 
-  padding: 12px; 
-  text-align: left; 
-  font-size: 15px; 
-  border-bottom: 1px solid #ccc;
-  color:#000;
-}
+        .btn-3d {
+            background: #e0e5ec;
+            color: #000;
+            transition: all 0.2s ease;
+        }
 
-/* ✅ Type and Amount Column Width Fix */
-td:nth-child(3), th:nth-child(3),
-td:nth-child(4), th:nth-child(4) {
-    min-width: 110px;
-    font-weight: bold;
-    white-space: nowrap;
-}
+        .btn-3d:active {
+            transform: scale(0.95);
+            box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
 
-.total { 
-  font-weight: bold; 
-  background: #dfe6ee;
-}
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
 
-h1, h2 {
-  text-align: center;
-  color: #fff;
-}
-
-/* 📱 Ad Container Style - Simplified */
-.ad-container {
-  text-align: center;
-  margin: 15px auto;
-  min-height: 50px; /* Space for AppCreator24 ads */
-}
-
-</style>
+        #offlineMsg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-<div id="offlineMsg" style="display:none; text-align:center; margin-top:50px;">
-  <h2>📶 Internet Required</h2>
-  <p>Please turn ON internet to use this app</p>
-</div>
+    <!-- Offline Message -->
+    <div id="offlineMsg">
+        <h2 class="text-3xl font-bold mb-2">📶 Internet Required</h2>
+        <p class="text-gray-400">Please turn ON internet to use this app</p>
+        <button onclick="location.reload()" class="mt-6 px-8 py-3 bg-[#e0e5ec] text-black rounded-xl font-bold">Retry</button>
+    </div>
 
-<div id="mainApp">
+    <div id="mainApp" class="p-4 md:p-8 max-w-5xl mx-auto">
+        
+        <!-- Ad Space -->
+        <div class="h-16 bg-white/5 rounded-xl mb-8 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
+            Advertisement
+        </div>
 
-<div class="ad-container"></div>
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-2 italic">
+                DAILY TRACKER <span class="text-[#e0e5ec]">3D</span>
+            </h1>
+            <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Starry Night Edition</p>
+        </header>
 
-<h1>Daily Tracker 3D</h1>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Entry Form -->
+            <div class="lg:col-span-5">
+                <div class="glass-card p-6 rounded-[2.5rem] sticky top-4">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">✨ New Entry</h2>
+                    <div class="space-y-4">
+                        <input type="date" id="entryDate" class="w-full p-4 rounded-2xl neo-shadow-inset">
+                        <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" class="w-full p-4 rounded-2xl neo-shadow-inset">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="number" id="amount" placeholder="Amount" class="w-full p-4 rounded-2xl neo-shadow-inset">
+                            <select id="type" class="w-full p-4 rounded-2xl neo-shadow-inset appearance-none">
+                                <option value="Expense">Expense</option>
+                                <option value="Income">Income</option>
+                            </select>
+                        </div>
 
-<div class="entry-form">
-  <input type="date" id="entryDate" />
-  <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" />
-  <input type="number" id="amount" placeholder="Amount" />
-  
-  <select id="type">
-    <option value="Income">Income</option>
-    <option value="Expense">Expense</option>
-  </select>
+                        <input type="text" id="note" placeholder="Note (optional)" class="w-full p-4 rounded-2xl neo-shadow-inset">
+                        
+                        <button onclick="addEntry()" class="w-full p-4 mt-4 rounded-2xl btn-3d font-black text-lg neo-shadow">ADD ENTRY</button>
+                        <button onclick="exportCSV()" class="w-full p-4 rounded-2xl btn-3d font-bold text-md neo-shadow flex items-center justify-center gap-2">
+                            📁 EXPORT FILE
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-  <input type="text" id="note" placeholder="Note (optional)" />
-  
-  <button class="btn" onclick="addEntry()">Add Entry</button>
-  <button class="btn" onclick="exportExcel()">📁 Export File</button>
-</div>
+            <!-- Stats & List -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-[#e0e5ec] p-5 rounded-3xl text-black neo-shadow">
+                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Today's Balance</p>
+                        <p id="balanceToday" class="text-2xl font-black">₹0</p>
+                        <div class="flex justify-between mt-2 text-[9px] font-bold uppercase">
+                            <span class="text-green-700" id="incomeToday">In: ₹0</span>
+                            <span class="text-red-700" id="expenseToday">Out: ₹0</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#e0e5ec] p-5 rounded-3xl text-black neo-shadow">
+                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Month Balance</p>
+                        <p id="balanceMonth" class="text-2xl font-black">₹0</p>
+                        <div class="flex justify-between mt-2 text-[9px] font-bold uppercase">
+                            <span class="text-green-700" id="incomeMonth">In: ₹0</span>
+                            <span class="text-red-700" id="expenseMonth">Out: ₹0</span>
+                        </div>
+                    </div>
+                </div>
 
-<h2>Month Entries</h2>
+                <!-- List -->
+                <div class="bg-[#e0e5ec] rounded-[2.5rem] neo-shadow overflow-hidden min-h-[400px]">
+                    <div class="p-6 border-b border-gray-300 flex justify-between items-center">
+                        <h2 class="text-black font-bold text-lg">Month Entries</h2>
+                        <span id="entryCount" class="bg-black/10 px-3 py-1 rounded-full text-[10px] font-bold text-black uppercase">0 Total</span>
+                    </div>
+                    <div id="entriesList" class="max-h-[500px] overflow-y-auto custom-scrollbar divide-y divide-gray-200">
+                        <!-- Entries will appear here -->
+                    </div>
+                </div>
 
-<table id="entriesTable">
-<thead>
-<tr>
-<th>Date</th>
-<th>Category</th>
-<th>Type</th>
-<th>Amount</th>
-<th>Note</th>
-<th>Delete</th>
-</tr>
-</thead>
-<tbody></tbody>
-<tfoot>
-<tr class="total"><td colspan="3">Total Income Today:</td><td id="totalIncome">0</td><td colspan="2"></td></tr>
-<tr class="total"><td colspan="3">Total Expense Today:</td><td id="totalExpense">0</td><td colspan="2"></td></tr>
-<tr class="total"><td colspan="3">Balance Today:</td><td id="balance">0</td><td colspan="2"></td></tr>
-<tr class="total"><td colspan="3">Total Income This Month:</td><td id="monthIncome">0</td><td colspan="2"></td></tr>
-<tr class="total"><td colspan="3">Total Expense This Month:</td><td id="monthExpense">0</td><td colspan="2"></td></tr>
-<tr class="total"><td colspan="3">Balance This Month:</td><td id="monthBalance">0</td><td colspan="2"></td></tr>
-</tfoot>
-</table>
+            </div>
+        </div>
 
-<div class="ad-container"></div>
+        <!-- Footer Ad -->
+        <div class="h-16 bg-white/5 rounded-xl mt-12 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
+            Advertisement
+        </div>
+    </div>
 
-</div>
+    <script>
+        /* --- LOGIC --- */
+        let entries = JSON.parse(localStorage.getItem("dailyEntries")) || [];
+        
+        // Set default date
+        document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
 
-<script>
-/* 🌐 INTERNET CHECK */
-function checkInternet(){
-  if(!navigator.onLine){
-    document.getElementById("mainApp").style.display="none";
-    document.getElementById("offlineMsg").style.display="block";
-  }
-}
-checkInternet();
-window.addEventListener("offline", checkInternet);
-window.addEventListener("online", ()=>location.reload());
+        function save() {
+            localStorage.setItem("dailyEntries", JSON.stringify(entries));
+            render();
+        }
 
-/* 📊 LOGIC */
-let entries = JSON.parse(localStorage.getItem("dailyEntries")) || [];
-function saveEntries() { localStorage.setItem("dailyEntries", JSON.stringify(entries)); }
+        function addEntry() {
+            const date = document.getElementById("entryDate").value;
+            const category = document.getElementById("category").value;
+            const amount = parseFloat(document.getElementById("amount").value);
+            const type = document.getElementById("type").value;
+            const note = document.getElementById("note").value;
 
-function addEntry() {
-  let date = document.getElementById("entryDate").value;
-  let category = document.getElementById("category").value;
-  let amount = parseFloat(document.getElementById("amount").value);
-  let type = document.getElementById("type").value;
-  let note = document.getElementById("note").value;
-  if (!date || !category || !amount) { alert("Please fill all fields!"); return; }
-  entries.push({ date, category, amount, type, note });
-  saveEntries();
-  renderTable();
-  document.getElementById("category").value = "";
-  document.getElementById("amount").value = "";
-  document.getElementById("note").value = "";
-}
+            if (!date || !category || isNaN(amount)) {
+                alert("Bhai, sab kuch sahi se bharo!");
+                return;
+            }
 
-function deleteEntry(index){ entries.splice(index,1); saveEntries(); renderTable(); }
+            entries.unshift({ id: Date.now(), date, category, amount, type, note });
+            
+            // Reset fields
+            document.getElementById("category").value = "";
+            document.getElementById("amount").value = "";
+            document.getElementById("note").value = "";
+            
+            save();
+        }
 
-function exportExcel() {
-  if (entries.length === 0) { 
-    alert("Bhai, pehle kuch entries toh daalo!"); 
-    return; 
-  }
-  let csvContent = "Date,Category,Type,Amount,Note\n";
-  entries.forEach(e => { 
-    csvContent += `${e.date},${e.category},${e.type},${e.amount},${e.note}\n`; 
-  });
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  link.setAttribute("href", url);
-  link.setAttribute("download", "DailyTracker_3D.csv");
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => { 
-    alert("File Downloaded! Check your Downloads folder."); 
-    URL.revokeObjectURL(url); 
-  }, 200);
-}
+        function deleteEntry(id) {
+            entries = entries.filter(e => e.id !== id);
+            save();
+        }
 
-function renderTable() {
-  let tbody = document.querySelector("#entriesTable tbody");
-  tbody.innerHTML = "";
-  let incomeToday = 0, expenseToday = 0, monthIncome = 0, monthExpense = 0;
-  let today = new Date().toISOString().split('T')[0];
-  let currentMonth = today.slice(0,7);
+        function render() {
+            const list = document.getElementById("entriesList");
+            list.innerHTML = "";
+            
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = today.slice(0, 7);
 
-  entries.forEach((e,index) => {
-    if (e.date.slice(0,7) === currentMonth) {
-      let tr = document.createElement("tr");
-      if (e.date === today) tr.style.backgroundColor = "#d0f0c0";
-      tr.innerHTML = `<td>${e.date}</td><td>${e.category}</td><td>${e.type}</td><td>${e.amount}</td><td>${e.note}</td><td><button onclick="deleteEntry(${index})">❌</button></td>`;
-      tbody.appendChild(tr);
-      if (e.type === "Income") monthIncome += e.amount; else monthExpense += e.amount;
-      if (e.date === today) { if (e.type === "Income") incomeToday += e.amount; else expenseToday += e.amount; }
-    }
-  });
-  document.getElementById("totalIncome").innerText = incomeToday;
-  document.getElementById("totalExpense").innerText = expenseToday;
-  document.getElementById("balance").innerText = incomeToday - expenseToday;
-  document.getElementById("monthIncome").innerText = monthIncome;
-  document.getElementById("monthExpense").innerText = monthExpense;
-  document.getElementById("monthBalance").innerText = monthIncome - monthExpense;
-}
-renderTable();
+            let inT = 0, outT = 0, inM = 0, outM = 0;
 
-/* ❄ Snow */
-function snow(){
-  const s = document.createElement("div");
-  s.className = "snowflake"; s.innerHTML = "❄";
-  s.style.left = Math.random()*window.innerWidth+"px";
-  s.style.animationDuration = (Math.random()*3+2)+"s";
-  document.body.appendChild(s);
-  setTimeout(()=>s.remove(),5000);
-}
-setInterval(snow,200);
-</script>
+            entries.forEach(e => {
+                const isThisMonth = e.date.slice(0, 7) === currentMonth;
+                const isToday = e.date === today;
+
+                if (isThisMonth) {
+                    if (e.type === "Income") inM += e.amount; else outM += e.amount;
+                    if (isToday) {
+                        if (e.type === "Income") inT += e.amount; else outT += e.amount;
+                    }
+
+                    // Create Item Card
+                    const item = document.createElement("div");
+                    item.className = "p-4 flex items-center justify-between hover:bg-white/10 transition-colors";
+                    item.innerHTML = `
+                        <div class="flex-1 min-w-0 mr-4">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold text-gray-500">${e.date}</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.type === 'Income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${e.type}</span>
+                            </div>
+                            <h3 class="text-black font-bold truncate">${e.category}</h3>
+                            <p class="text-gray-500 text-xs truncate">${e.note || ''}</p>
+                        </div>
+                        <div class="text-right flex items-center gap-4">
+                            <p class="font-black text-lg ${e.type === 'Income' ? 'text-green-600' : 'text-red-600'}">
+                                ${e.type === 'Income' ? '+' : '-'}₹${e.amount}
+                            </p>
+                            <button onclick="deleteEntry(${e.id})" class="p-2 text-gray-400 hover:text-red-600">❌</button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                }
+            });
+
+            // Update Stats
+            document.getElementById("incomeToday").innerText = `In: ₹${inT}`;
+            document.getElementById("expenseToday").innerText = `Out: ₹${outT}`;
+            document.getElementById("balanceToday").innerText = `₹${inT - outT}`;
+            document.getElementById("incomeMonth").innerText = `In: ₹${inM}`;
+            document.getElementById("expenseMonth").innerText = `Out: ₹${outM}`;
+            document.getElementById("balanceMonth").innerText = `₹${inM - outM}`;
+            document.getElementById("entryCount").innerText = `${entries.length} Total`;
+        }
+
+        function exportCSV() {
+            if (entries.length === 0) { alert("Data toh daalo!"); return; }
+            let csv = "Date,Category,Type,Amount,Note\n";
+            entries.forEach(e => {
+                csv += `${e.date},"${e.category}",${e.type},${e.amount},"${e.note}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `DailyTracker_3D_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => { alert("File Downloaded!"); URL.revokeObjectURL(url); }, 200);
+        }
+
+        /* --- STARS --- */
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement("div");
+                star.className = "star";
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + "px";
+                star.style.height = size + "px";
+                star.style.left = Math.random() * 100 + "vw";
+                star.style.top = Math.random() * 100 + "vh";
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + "s");
+                star.style.animationDelay = (Math.random() * 5) + "s";
+                document.body.appendChild(star);
+            }
+        }
+
+        /* --- INTERNET CHECK --- */
+        function checkNet() {
+            if (!navigator.onLine) {
+                document.getElementById("mainApp").style.display = "none";
+                document.getElementById("offlineMsg").style.display = "flex";
+            }
+        }
+
+        window.addEventListener("offline", checkNet);
+        window.addEventListener("online", () => location.reload());
+
+        // Init
+        createStars();
+        checkNet();
+        render();
+    </script>
 </body>
 </html>
