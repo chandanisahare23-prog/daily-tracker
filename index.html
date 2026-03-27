@@ -279,51 +279,64 @@
             document.getElementById("entryCount").innerText = `${entries.length} Total`;
         }
 
-       /* --- NEW APP-FRIENDLY EXPORT --- */
-async function exportCSV() {
-    try {
-        if (!entries || entries.length === 0) { 
-            alert("Bhai, tracker mein abhi koi data nahi hai!"); 
-            return; 
-        }
+        /* --- ROBUST MOBILE EXPORT --- */
+        async function exportCSV() {
+            if (entries.length === 0) { alert("Pehle kuch data toh daalo!"); return; }
+            
+            let csv = "Date,Category,Type,Amount,Note\n";
+            entries.forEach(e => {
+                const cleanCat = (e.category || '').replace(/"/g, '""');
+                const cleanNote = (e.note || '').replace(/"/g, '""');
+                csv += `${e.date},"${cleanCat}",${e.type},${e.amount},"${cleanNote}"\n`;
+            });
 
-        let csvContent = "Date,Category,Type,Amount,Note\n";
-        entries.forEach(e => {
-            const row = `${e.date},"${e.category}",${e.type},${e.amount},"${e.note}"`;
-            csvContent += row + "\n";
-        });
+            const filename = `DailyTracker_3D_${new Date().toISOString().split('T')[0]}.csv`;
 
-        const fileName = `My_Daily_Tracker_${new Date().getTime()}.csv`;
-
-        // Mobile Share System Check
-        if (navigator.share && navigator.canShare) {
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const file = new File([blob], fileName, { type: 'text/csv' });
-
-            if (navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    title: 'Daily Tracker Data',
-                    text: 'Mera Daily Tracker Export'
-                });
-            } else {
-                throw new Error("File share not supported");
+            // 1. Try Web Share API (Best for Mobile Apps/WebViews)
+            if (navigator.canShare && navigator.share) {
+                try {
+                    const file = new File([csv], filename, { type: 'text/csv' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Daily Tracker Data',
+                            text: 'Exported CSV File',
+                        });
+                        return; // Success!
+                    }
+                } catch (err) {
+                    console.log("Share failed, falling back to download:", err);
+                }
             }
-        } 
-        else {
-            // Agar share nahi chala toh Copy to Clipboard (Bypass)
-            const textArea = document.createElement("textarea");
-            textArea.value = csvContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert("Download Block hai! Tracker data Copy ho gaya hai, Excel mein paste kar lein.");
+
+            // 2. Fallback: Blob Download (Standard)
+            try {
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", filename);
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    alert("✅ Export Successful! Check your Downloads folder.");
+                }, 1000);
+            } catch (err) {
+                console.error("Export failed:", err);
+                // 3. Last Resort: Data URI
+                try {
+                    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                    window.open(encodedUri);
+                    alert("✅ Export Attempted via Data URI.");
+                } catch (uriErr) {
+                    alert("❌ Export failed. Please check browser permissions.");
+                }
+            }
         }
-    } catch (err) {
-        alert("Export Error: " + err.message);
-    }
-}}
 
         /* --- STARS --- */
         function createStars() {
