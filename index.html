@@ -3,15 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Tracker 3D - Starry Night</title>
-    <!-- Tailwind CSS for modern styling -->
+    <!-- Metadata from metadata.json -->
+    <title>Daily Tracker 3D</title>
+    <meta name="description" content="A mobile-friendly 3D neumorphic expense and income tracker with CSV export.">
+    
+    <!-- Tailwind CSS (from package.json/vite config intent) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (from package.json) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        /* Styles from index.css and App.tsx */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
+        :root {
+            --bg-color: #000;
+            --neo-bg: #e0e5ec;
+            --neo-shadow: #a3b1c6;
+            --neo-light: #ffffff;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #000;
+            background-color: var(--bg-color);
             color: #fff;
             margin: 0;
             overflow-x: hidden;
@@ -23,8 +38,12 @@
             box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5), -4px -4px 10px rgba(255, 255, 255, 0.05);
         }
 
+        .neo-shadow-light {
+            box-shadow: 6px 6px 12px var(--neo-shadow), -6px -6px 12px var(--neo-light);
+        }
+
         .neo-shadow-inset {
-            box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), inset -2px -2px 6px rgba(255, 255, 255, 0.05);
+            box-shadow: inset 4px 4px 6px var(--neo-shadow), inset -4px -4px 6px var(--neo-light);
         }
 
         /* Starry Night Animation */
@@ -38,40 +57,40 @@
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* Glassmorphism Card */
+        /* Glassmorphism */
         .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* 3D Inputs */
+        /* 3D Inputs & Buttons */
         input, select {
-            background: #e0e5ec !important;
+            background: var(--neo-bg) !important;
             color: #000 !important;
             border: none !important;
             outline: none !important;
         }
 
         .btn-3d {
-            background: #e0e5ec;
+            background: var(--neo-bg);
             color: #000;
             transition: all 0.2s ease;
             cursor: pointer;
         }
 
         .btn-3d:active {
-            transform: scale(0.95);
-            box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+            transform: scale(0.96);
+            box-shadow: inset 4px 4px 8px var(--neo-shadow), inset -4px -4px 8px var(--neo-light);
         }
 
         /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
-            width: 5px;
+            width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
@@ -86,50 +105,62 @@
             position: fixed;
             inset: 0;
             background: #000;
-            z-index: 100;
+            z-index: 1000;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
         }
+
+        /* List Item Animation */
+        .entry-item {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Offline Message -->
+    <!-- Offline Overlay -->
     <div id="offlineMsg">
+        <i data-lucide="wifi-off" class="w-16 h-16 mb-4 animate-pulse"></i>
         <h2 class="text-3xl font-bold mb-2">📶 Internet Required</h2>
         <p class="text-gray-400">Please turn ON internet to use this app</p>
-        <button onclick="location.reload()" class="mt-6 px-8 py-3 bg-[#e0e5ec] text-black rounded-xl font-bold">Retry</button>
+        <button onclick="location.reload()" class="mt-8 px-10 py-4 bg-[#e0e5ec] text-black rounded-2xl font-bold neo-shadow-light">Retry</button>
     </div>
 
-    <div id="mainApp" class="p-4 md:p-8 max-w-5xl mx-auto">
+    <div id="mainApp" class="p-4 md:p-8 max-w-6xl mx-auto relative z-10">
         
-        <!-- Ad Space -->
-        <div class="h-16 bg-white/5 rounded-xl mb-8 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
+        <!-- Ad Placeholder -->
+        <div class="max-w-4xl mx-auto h-16 bg-white/5 rounded-2xl mb-10 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-[0.4em]">
             Advertisement
         </div>
 
-        <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-2 italic">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-2 italic">
                 DAILY TRACKER <span class="text-[#e0e5ec]">3D</span>
             </h1>
-            <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Starry Night Edition</p>
+            <p class="text-gray-500 text-xs uppercase tracking-[0.5em]">Smart Neumorphic Finance</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            <!-- Entry Form -->
+            <!-- Left Column: Form -->
             <div class="lg:col-span-5">
-                <div class="glass-card p-6 rounded-[2.5rem] sticky top-4">
-                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">✨ New Entry</h2>
-                    <div class="space-y-4">
-                        <input type="date" id="entryDate" class="w-full p-4 rounded-2xl neo-shadow-inset">
-                        <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" class="w-full p-4 rounded-2xl neo-shadow-inset">
+                <div class="glass-card p-8 rounded-[3rem] sticky top-6">
+                    <h2 class="text-xl font-bold mb-8 flex items-center gap-3">
+                        <i data-lucide="plus-circle" class="w-6 h-6"></i> New Entry
+                    </h2>
+                    <div class="space-y-5">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-400 ml-4">Date</label>
+                            <input type="date" id="entryDate" class="w-full p-4 rounded-2xl neo-shadow-inset font-medium">
+                        </div>
                         
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="number" id="amount" placeholder="Amount" class="w-full p-4 rounded-2xl neo-shadow-inset">
-                            <select id="type" class="w-full p-4 rounded-2xl neo-shadow-inset appearance-none">
+                        <input type="text" id="category" placeholder="Category (Food, Rent, etc.)" class="w-full p-4 rounded-2xl neo-shadow-inset font-medium">
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <input type="number" id="amount" placeholder="Amount" class="w-full p-4 rounded-2xl neo-shadow-inset font-bold">
+                            <select id="type" class="w-full p-4 rounded-2xl neo-shadow-inset font-bold appearance-none">
                                 <option value="Expense">Expense</option>
                                 <option value="Income">Income</option>
                             </select>
@@ -137,62 +168,71 @@
 
                         <input type="text" id="note" placeholder="Note (optional)" class="w-full p-4 rounded-2xl neo-shadow-inset">
                         
-                        <button onclick="addEntry()" class="w-full p-4 mt-4 rounded-2xl btn-3d font-black text-lg neo-shadow">ADD ENTRY</button>
-                        <button onclick="exportCSV()" class="w-full p-4 rounded-2xl btn-3d font-bold text-md neo-shadow flex items-center justify-center gap-2">
-                            📁 EXPORT FILE
+                        <button onclick="addEntry()" class="w-full p-5 mt-6 rounded-2xl btn-3d font-black text-xl neo-shadow-light tracking-tight">ADD ENTRY</button>
+                        
+                        <button onclick="exportCSV()" class="w-full p-4 rounded-2xl btn-3d font-bold text-md neo-shadow-light flex items-center justify-center gap-3">
+                            <i data-lucide="download" class="w-5 h-5"></i> EXPORT CSV
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats & List -->
-            <div class="lg:col-span-7 space-y-6">
+            <!-- Right Column: Stats & List -->
+            <div class="lg:col-span-7 space-y-10">
                 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-[#e0e5ec] p-5 rounded-3xl text-black neo-shadow">
-                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Today's Balance</p>
-                        <p id="balanceToday" class="text-2xl font-black">₹0</p>
-                        <div class="flex justify-between mt-2 text-[9px] font-bold uppercase">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-[#e0e5ec] p-6 rounded-[2rem] text-black neo-shadow-light">
+                        <p class="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Today's Balance</p>
+                        <p id="balanceToday" class="text-3xl font-black">₹0</p>
+                        <div class="flex justify-between mt-3 text-[10px] font-bold uppercase">
                             <span class="text-green-700" id="incomeToday">In: ₹0</span>
                             <span class="text-red-700" id="expenseToday">Out: ₹0</span>
                         </div>
                     </div>
-                    <div class="bg-[#e0e5ec] p-5 rounded-3xl text-black neo-shadow">
-                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Month Balance</p>
-                        <p id="balanceMonth" class="text-2xl font-black">₹0</p>
-                        <div class="flex justify-between mt-2 text-[9px] font-bold uppercase">
+                    <div class="bg-[#e0e5ec] p-6 rounded-[2rem] text-black neo-shadow-light">
+                        <p class="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Monthly Balance</p>
+                        <p id="balanceMonth" class="text-3xl font-black">₹0</p>
+                        <div class="flex justify-between mt-3 text-[10px] font-bold uppercase">
                             <span class="text-green-700" id="incomeMonth">In: ₹0</span>
                             <span class="text-red-700" id="expenseMonth">Out: ₹0</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- List -->
-                <div class="bg-[#e0e5ec] rounded-[2.5rem] neo-shadow overflow-hidden min-h-[400px]">
-                    <div class="p-6 border-b border-gray-300 flex justify-between items-center">
-                        <h2 class="text-black font-bold text-lg">Month Entries</h2>
-                        <span id="entryCount" class="bg-black/10 px-3 py-1 rounded-full text-[10px] font-bold text-black uppercase">0 Total</span>
+                <!-- List Container -->
+                <div class="bg-[#e0e5ec] rounded-[3rem] neo-shadow-light overflow-hidden min-h-[500px] flex flex-col">
+                    <div class="p-8 border-b border-gray-300 flex justify-between items-center bg-white/10">
+                        <h2 class="text-black font-black text-xl italic">Month Entries</h2>
+                        <span id="entryCount" class="bg-black/10 px-4 py-1.5 rounded-full text-[10px] font-black text-black uppercase tracking-widest">0 Total</span>
                     </div>
-                    <div id="entriesList" class="max-h-[500px] overflow-y-auto custom-scrollbar divide-y divide-gray-200">
-                        <!-- Entries will appear here -->
+                    
+                    <div id="entriesList" class="flex-1 max-h-[600px] overflow-y-auto custom-scrollbar divide-y divide-gray-200">
+                        <!-- Empty State -->
+                        <div id="emptyState" class="p-20 text-center text-gray-400 flex flex-col items-center">
+                            <i data-lucide="alert-circle" class="w-16 h-16 mb-4 opacity-10"></i>
+                            <p class="font-bold uppercase tracking-widest text-xs">No entries yet</p>
+                        </div>
                     </div>
                 </div>
 
             </div>
-        </div>
+        </main>
 
         <!-- Footer Ad -->
-        <div class="h-16 bg-white/5 rounded-xl mt-12 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-widest">
+        <div class="h-16 bg-white/5 rounded-2xl mt-16 flex items-center justify-center text-[10px] text-gray-600 uppercase tracking-[0.4em]">
             Advertisement
         </div>
     </div>
 
     <script>
-        /* --- LOGIC --- */
+        /* --- CORE LOGIC --- */
         let entries = JSON.parse(localStorage.getItem("dailyEntries")) || [];
         
-        // Set default date
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Set default date to today
         document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
 
         function save() {
@@ -203,16 +243,26 @@
         function addEntry() {
             const date = document.getElementById("entryDate").value;
             const category = document.getElementById("category").value;
-            const amount = parseFloat(document.getElementById("amount").value);
+            const amountInput = document.getElementById("amount").value;
+            const amount = parseFloat(amountInput);
             const type = document.getElementById("type").value;
             const note = document.getElementById("note").value;
 
             if (!date || !category || isNaN(amount)) {
-                alert("Bhai, sab kuch sahi se bharo!");
+                alert("Bhai, saari fields sahi se bharo!");
                 return;
             }
 
-            entries.unshift({ id: Date.now(), date, category, amount, type, note });
+            const newEntry = {
+                id: Date.now() + Math.random().toString(36).substr(2, 9),
+                date,
+                category,
+                amount,
+                type,
+                note
+            };
+
+            entries.unshift(newEntry);
             
             // Reset fields
             document.getElementById("category").value = "";
@@ -223,12 +273,20 @@
         }
 
         function deleteEntry(id) {
-            entries = entries.filter(e => e.id !== id);
-            save();
+            const element = document.getElementById(`entry-${id}`);
+            if (element) {
+                element.style.opacity = '0';
+                element.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    entries = entries.filter(e => e.id !== id);
+                    save();
+                }, 300);
+            }
         }
 
         function render() {
             const list = document.getElementById("entriesList");
+            const emptyState = document.getElementById("emptyState");
             list.innerHTML = "";
             
             const today = new Date().toISOString().split('T')[0];
@@ -236,57 +294,72 @@
 
             let inT = 0, outT = 0, inM = 0, outM = 0;
 
-            entries.forEach(e => {
-                const isThisMonth = e.date.slice(0, 7) === currentMonth;
-                const isToday = e.date === today;
+            if (entries.length === 0) {
+                list.appendChild(emptyState);
+                emptyState.style.display = "flex";
+            } else {
+                emptyState.style.display = "none";
+                
+                entries.forEach(e => {
+                    const isThisMonth = e.date.slice(0, 7) === currentMonth;
+                    const isToday = e.date === today;
 
-                if (isThisMonth) {
-                    if (e.type === "Income") inM += e.amount; else outM += e.amount;
-                    if (isToday) {
-                        if (e.type === "Income") inT += e.amount; else outT += e.amount;
-                    }
+                    if (isThisMonth) {
+                        if (e.type === "Income") inM += e.amount; else outM += e.amount;
+                        if (isToday) {
+                            if (e.type === "Income") inT += e.amount; else outT += e.amount;
+                        }
 
-                    // Create Item Card
-                    const item = document.createElement("div");
-                    item.className = "p-4 flex items-center justify-between hover:bg-white/10 transition-colors";
-                    item.innerHTML = `
-                        <div class="flex-1 min-w-0 mr-4">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[10px] font-bold text-gray-500">${e.date}</span>
-                                <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase \${e.type === 'Income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">\${e.type}</span>
+                        // Create Item Card
+                        const item = document.createElement("div");
+                        item.id = `entry-${e.id}`;
+                        item.className = "entry-item p-5 flex items-center justify-between hover:bg-white/20 transition-all cursor-default";
+                        item.innerHTML = `
+                            <div class="flex-1 min-w-0 mr-4">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold text-gray-500">${e.date}</span>
+                                    <span class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase \${e.type === 'Income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">\${e.type}</span>
+                                </div>
+                                <h3 class="text-black font-black text-lg truncate tracking-tight">\${e.category}</h3>
+                                \${e.note ? `<p class="text-gray-500 text-xs truncate font-medium">\${e.note}</p>` : ''}
                             </div>
-                            <h3 class="text-black font-bold truncate">\${e.category}</h3>
-                            <p class="text-gray-500 text-xs truncate">\${e.note || ''}</p>
-                        </div>
-                        <div class="text-right flex items-center gap-4">
-                            <p class="font-black text-lg \${e.type === 'Income' ? 'text-green-600' : 'text-red-600'}">
-                                \${e.type === 'Income' ? '+' : '-'}₹\${e.amount}
-                            </p>
-                            <button onclick="deleteEntry(\${e.id})" class="p-2 text-gray-400 hover:text-red-600">❌</button>
-                        </div>
-                    `;
-                    list.appendChild(item);
-                }
-            });
+                            <div class="text-right flex items-center gap-5">
+                                <p class="font-black text-xl \${e.type === 'Income' ? 'text-green-600' : 'text-red-600'}">
+                                    \${e.type === 'Income' ? '+' : '-'}₹\${e.amount.toLocaleString()}
+                                </p>
+                                <button onclick="deleteEntry('\${e.id}')" class="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        `;
+                        list.appendChild(item);
+                    }
+                });
+                lucide.createIcons();
+            }
 
-            // Update Stats
-            document.getElementById("incomeToday").innerText = `In: ₹${inT}`;
-            document.getElementById("expenseToday").innerText = `Out: ₹${outT}`;
-            document.getElementById("balanceToday").innerText = `₹${inT - outT}`;
-            document.getElementById("incomeMonth").innerText = `In: ₹${inM}`;
-            document.getElementById("expenseMonth").innerText = `Out: ₹${outM}`;
-            document.getElementById("balanceMonth").innerText = `₹${inM - outM}`;
-            document.getElementById("entryCount").innerText = `${entries.length} Total`;
+            // Update Stats Display
+            document.getElementById("incomeToday").innerText = `In: ₹\${inT.toLocaleString()}`;
+            document.getElementById("expenseToday").innerText = `Out: ₹\${outT.toLocaleString()}`;
+            document.getElementById("balanceToday").innerText = `₹\${(inT - outT).toLocaleString()}`;
+            document.getElementById("incomeMonth").innerText = `In: ₹\${inM.toLocaleString()}`;
+            document.getElementById("expenseMonth").innerText = `Out: ₹\${outM.toLocaleString()}`;
+            document.getElementById("balanceMonth").innerText = `₹\${(inM - outM).toLocaleString()}`;
+            document.getElementById("entryCount").innerText = `\${entries.length} Total`;
+            
+            // Color coding balance
+            document.getElementById("balanceToday").className = `text-3xl font-black \${(inT - outT) >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            document.getElementById("balanceMonth").className = `text-3xl font-black \${(inM - outM) >= 0 ? 'text-green-600' : 'text-red-600'}`;
         }
 
         function exportCSV() {
-            if (entries.length === 0) { alert("Data toh daalo!"); return; }
+            if (entries.length === 0) { alert("Bhai, pehle kuch entries toh daalo!"); return; }
             
             let csv = "Date,Category,Type,Amount,Note\n";
             entries.forEach(e => {
                 const cleanCat = (e.category || '').replace(/"/g, '""');
                 const cleanNote = (e.note || '').replace(/"/g, '""');
-                csv += `${e.date},"${cleanCat}",${e.type},${e.amount},"${cleanNote}"\n`;
+                csv += `\${e.date},"\${cleanCat}",\${e.type},\${e.amount},"\${cleanNote}"\n`;
             });
 
             try {
@@ -304,21 +377,21 @@
                 setTimeout(() => {
                     document.body.removeChild(link);
                     URL.revokeObjectURL(url);
-                    alert("File Downloaded Successfully!");
+                    alert("✅ File Downloaded Successfully!");
                 }, 200);
             } catch (err) {
                 console.error("Export failed:", err);
-                alert("Export failed. Please try again.");
+                alert("❌ Export failed. Please try again.");
             }
         }
 
-        /* --- STARS --- */
-        function createStars() {
-            const starCount = 100;
+        /* --- STARRY NIGHT BACKGROUND --- */
+        function initStars() {
+            const starCount = 120;
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement("div");
                 star.className = "star";
-                const size = Math.random() * 3 + 1;
+                const size = Math.random() * 2.5 + 1;
                 star.style.width = size + "px";
                 star.style.height = size + "px";
                 star.style.left = Math.random() * 100 + "vw";
@@ -329,8 +402,8 @@
             }
         }
 
-        /* --- INTERNET CHECK --- */
-        function checkNet() {
+        /* --- NETWORK STATUS --- */
+        function checkNetwork() {
             if (!navigator.onLine) {
                 document.getElementById("mainApp").style.display = "none";
                 document.getElementById("offlineMsg").style.display = "flex";
@@ -340,12 +413,12 @@
             }
         }
 
-        window.addEventListener("offline", checkNet);
+        window.addEventListener("offline", checkNetwork);
         window.addEventListener("online", () => location.reload());
 
-        // Init
-        createStars();
-        checkNet();
+        // Initial Launch
+        initStars();
+        checkNetwork();
         render();
     </script>
 </body>
